@@ -1,17 +1,3 @@
-/**
- * Retrieve list of running instances.
- *
- * Don't hard-code your credentials!
- * Export the following environment variables instead:
- *
- * export AWS_ACCESS_KEY_ID='AKID'
- * export AWS_SECRET_ACCESS_KEY='SECRET'
- *
- * This example loads credentials from ~/.aws/credentials:
- * [default]
- * aws_access_key_id = ...
- * aws_secret_access_key = ...
- */
 package main
 
 import (
@@ -20,24 +6,15 @@ import (
 	"os"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/defaults"
-	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/codegangsta/cli"
 	"github.com/olekukonko/tablewriter"
 )
 
-func toTable(result *ec2.DescribeInstancesOutput) {
+func toTable(instances []Instance) {
 	var data = make([][]string, 0)
-	for _, reservation := range result.Reservations {
-		for _, instance := range reservation.Instances {
-			var id = *instance.InstanceId
-			var publicIp = *instance.PublicIpAddress
-			var privateIp = *instance.PrivateIpAddress
-			var tag = instance.Tags[0].Value
-			var record = []string{id, *tag, publicIp, privateIp}
-			data = append(data, record)
-		}
+	for _, item := range instances {
+		var record = []string{item.ID, item.Tag, item.PublicIP, item.PrivateIP}
+		data = append(data, record)
 	}
 
 	var table = tablewriter.NewWriter(os.Stdout)
@@ -48,49 +25,33 @@ func toTable(result *ec2.DescribeInstancesOutput) {
 	table.Render()
 }
 
-func toYaml(result *ec2.DescribeInstancesOutput) {
+func toYaml(instances []Instance) {
 	fmt.Printf("---\n")
-	for _, reservation := range result.Reservations {
-		for _, instance := range reservation.Instances {
-			var id = *instance.InstanceId
-			var publicIp = *instance.PublicIpAddress
-			var privateIp = *instance.PrivateIpAddress
-			var tag = instance.Tags[0].Value
-			fmt.Printf("%s:\n", id)
-			fmt.Printf("    %s\n", *tag)
-			fmt.Printf("    %s\n", publicIp)
-			fmt.Printf("    %s\n", privateIp)
-		}
+	for _, item := range instances {
+		fmt.Printf("%s:\n", item.ID)
+		fmt.Printf("    %s\n", item.Tag)
+		fmt.Printf("    %s\n", item.PublicIP)
+		fmt.Printf("    %s\n", item.PrivateIP)
 	}
 }
 
 func list(c *cli.Context) {
-	defaults.DefaultConfig.Region = aws.String("us-west-2")
-	svc := ec2.New(nil)
-
-	var filters = []*ec2.Filter{
-		&ec2.Filter{
-			Name:   aws.String("instance-state-name"),
-			Values: []*string{aws.String("running")},
-		},
-	}
-
-	request := ec2.DescribeInstancesInput{Filters: filters}
-	result, err := svc.DescribeInstances(&request)
-	if err != nil {
-		log.Fatalf("Error getting description: %s", err)
-	}
-
 	var format = "table"
 	if c.String("format") != "" {
 		format = strings.ToLower(c.String("format"))
 	}
 
+	var instances []Instance
+	var err error
+	if instances, err = GetRunningInstances(); err != nil {
+		log.Fatalf("Error retrieving instances: %s", err)
+	}
+
 	switch format {
 	case "table":
-		toTable(result)
+		toTable(instances)
 	case "yaml":
-		toYaml(result)
+		toYaml(instances)
 	default:
 		log.Fatalf("Format %q is not supported.", format)
 	}

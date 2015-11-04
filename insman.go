@@ -1,9 +1,28 @@
+/*
+ * Don't hard-code your credentials!
+ * Export the following environment variables instead:
+ *
+ * export AWS_ACCESS_KEY_ID='AKID'
+ * export AWS_SECRET_ACCESS_KEY='SECRET'
+ *
+ * This example loads credentials from ~/.aws/credentials:
+ * [default]
+ * aws_access_key_id = ...
+ * aws_secret_access_key = ...
+ */
 package main
 
 import (
-	"github.com/codegangsta/cli"
 	"os"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/defaults"
+	"github.com/codegangsta/cli"
 )
+
+func init() {
+	defaults.DefaultConfig.Region = aws.String("us-west-2")
+}
 
 func main() {
 	var app = cli.NewApp()
@@ -19,6 +38,17 @@ func main() {
 				cli.StringFlag{
 					Name:  "format",
 					Usage: "List format: table or yaml",
+				},
+			},
+		},
+		cli.Command{
+			Name:   "exec",
+			Usage:  "Execute command on instances",
+			Action: exec,
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "all",
+					Usage: "Execute command on all instances",
 				},
 			},
 		},
