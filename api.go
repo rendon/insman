@@ -1,7 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"golang.org/x/crypto/ssh"
+	"io/ioutil"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
@@ -38,4 +42,42 @@ func GetRunningInstances() ([]Instance, error) {
 		}
 	}
 	return instances, nil
+}
+
+func getPublicKeys(file string) (ssh.AuthMethod, error) {
+	buffer, err := ioutil.ReadFile(file)
+	if err != nil {
+		return nil, err
+	}
+
+	key, err := ssh.ParsePrivateKey(buffer)
+	if err != nil {
+		return nil, err
+	}
+
+	return ssh.PublicKeys(key), nil
+}
+
+func SendCommand(user, host, cmd string, auth ssh.AuthMethod) (string, error) {
+	var config = &ssh.ClientConfig{
+		User: user,
+		Auth: []ssh.AuthMethod{auth},
+	}
+	client, err := ssh.Dial("tcp", host+":22", config)
+	if err != nil {
+		return "", fmt.Errorf("Failed to connect to server: %s", err)
+	}
+
+	session, err := client.NewSession()
+	if err != nil {
+		return "", fmt.Errorf("Failed to create session: %s", err)
+	}
+	defer session.Close()
+
+	var b bytes.Buffer
+	session.Stdout = &b
+	if err := session.Run(cmd); err != nil {
+		return "", fmt.Errorf("Failed to run: %s", err)
+	}
+	return b.String(), nil
 }

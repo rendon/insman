@@ -13,6 +13,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -22,6 +23,7 @@ import (
 
 func init() {
 	defaults.DefaultConfig.Region = aws.String("us-west-2")
+	log.SetFlags(0)
 }
 
 func main() {
