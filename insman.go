@@ -16,17 +16,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/defaults"
 	"github.com/codegangsta/cli"
 )
 
-func init() {
-	defaults.DefaultConfig.Region = aws.String("us-west-2")
-	log.SetFlags(0)
-}
-
 func main() {
+	log.SetFlags(0)
 	var app = cli.NewApp()
 	app.Name = "insman"
 	app.Version = "0.1.0"
@@ -55,6 +49,5 @@ func main() {
 			},
 		},
 	}
-
 	app.Run(os.Args)
 }

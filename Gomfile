@@ -1,0 +1,6 @@
+gom	"github.com/aws/aws-sdk-go/aws", :tag => 'v0.10.2'
+gom	"github.com/aws/aws-sdk-go/service/ec2", :tag => 'v0.10.2'
+gom "github.com/codegangsta/cli"
+gom "github.com/goutil/arrays"
+gom "github.com/olekukonko/tablewriter"
+gom "golang.org/x/crypto/ssh"

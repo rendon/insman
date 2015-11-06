@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 mkdir -p bin/
-if [[ $OSTYPE =~ "Linux" ]]
+if [[ $OSTYPE =~ "linux" ]]
 then
     GOOS=linux GOARCH=amd64 gom build -o bin/insman
 elif [[ $OSTYPE =~ "darwin" ]]

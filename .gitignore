@@ -1,2 +1,3 @@
 *.swp
 insman
+_vendor/
