@@ -3,4 +3,4 @@ bin/build || exit 1
 BIN_DIR=$HOME/bin
 
 mkdir -p $BIN_DIR
-cp -v bin/insman $BIN_DIR/insman
+mv -v bin/insman $BIN_DIR/insman

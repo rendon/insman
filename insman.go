@@ -49,6 +49,12 @@ func main() {
 				},
 			},
 		},
+		cli.Command{
+			Name:      "terminate",
+			Usage:     "Terminates one or more instances",
+			ArgsUsage: "<InstanceID>[ <InstanceID>]*",
+			Action:    terminate,
+		},
 	}
 	app.Run(os.Args)
 }

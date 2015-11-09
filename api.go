@@ -46,6 +46,20 @@ func GetRunningInstances() ([]Instance, error) {
 	return instances, nil
 }
 
+func TerminateInstances(ids []string) (*ec2.TerminateInstancesOutput, error) {
+	var svc = ec2.New(session.New(), nil)
+	var instanceIds = make([]*string, 0)
+	for _, id := range ids {
+		instanceIds = append(instanceIds, aws.String(id))
+	}
+	var req = ec2.TerminateInstancesInput{InstanceIds: instanceIds}
+	var resp, err = svc.TerminateInstances(&req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, err
+}
+
 func getPublicKeys(file string) (ssh.AuthMethod, error) {
 	buffer, err := ioutil.ReadFile(file)
 	if err != nil {
