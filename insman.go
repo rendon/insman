@@ -38,9 +38,10 @@ func main() {
 			},
 		},
 		cli.Command{
-			Name:   "exec",
-			Usage:  "Execute command on instances",
-			Action: exec,
+			Name:      "exec",
+			Usage:     "Execute command on instances",
+			ArgsUsage: "<command> [<host1> <host2> ...]",
+			Action:    exec,
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "all",

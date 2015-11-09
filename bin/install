@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+bin/build || exit 1
+BIN_DIR=$HOME/bin
+
+mkdir -p $BIN_DIR
+cp -v bin/insman $BIN_DIR/insman

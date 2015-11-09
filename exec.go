@@ -11,7 +11,8 @@ import (
 
 func exec(c *cli.Context) {
 	if len(c.Args()) < 1 {
-		log.Fatalf("USAGE: exec <command> [<host1> <host2> ...] [options]")
+		cli.ShowCommandHelp(c, "exec")
+		return
 	}
 
 	var cmd = c.Args()[0]
