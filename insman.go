@@ -1,15 +1,4 @@
-/*
- * Don't hard-code your credentials!
- * Export the following environment variables instead:
- *
- * export AWS_ACCESS_KEY_ID='AKID'
- * export AWS_SECRET_ACCESS_KEY='SECRET'
- *
- * This example loads credentials from ~/.aws/credentials:
- * [default]
- * aws_access_key_id = ...
- * aws_secret_access_key = ...
- */
+// AWS Instance manager
 package main
 
 import (

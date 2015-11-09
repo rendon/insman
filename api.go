@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
+// GetRunningInstances returns the list of running instances.
 func GetRunningInstances() ([]Instance, error) {
 	var svc = ec2.New(session.New(), nil)
 
@@ -46,6 +47,7 @@ func GetRunningInstances() ([]Instance, error) {
 	return instances, nil
 }
 
+// TerminateInstances terminates instances whose ID are contained in `ids`.
 func TerminateInstances(ids []string) (*ec2.TerminateInstancesOutput, error) {
 	var svc = ec2.New(session.New(), nil)
 	var instanceIds = make([]*string, 0)
@@ -74,6 +76,7 @@ func getPublicKeys(file string) (ssh.AuthMethod, error) {
 	return ssh.PublicKeys(key), nil
 }
 
+// SendCommand sends command to host via SSH.
 func SendCommand(user, host, cmd string, auth ssh.AuthMethod) (string, error) {
 	var config = &ssh.ClientConfig{
 		User: user,
